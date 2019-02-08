@@ -1,0 +1,4 @@
+.idea/
+*.iml
+
+game.db.json

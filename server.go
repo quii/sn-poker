@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 // PlayerStore stores score information about players
@@ -71,7 +72,7 @@ func (p *PlayerServer) webSocket(w http.ResponseWriter, r *http.Request) {
 	p.game.Start(numberOfPlayers, ws)
 
 	winner := ws.WaitForMsg()
-	p.game.Finish(winner)
+	p.game.Finish(strings.ToLower(winner))
 }
 
 func (p *PlayerServer) playGame(w http.ResponseWriter, r *http.Request) {

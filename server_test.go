@@ -124,7 +124,7 @@ func TestGame(t *testing.T) {
 
 	t.Run("start a game with 3 players, send some blind alerts down WS and declare Ruth the winner", func(t *testing.T) {
 		wantedBlindAlert := "Blind is 100"
-		winner := "Ruth"
+		winner := "ruth"
 
 		game := &GameSpy{BlindAlert: []byte(wantedBlindAlert)}
 		server := httptest.NewServer(mustMakePlayerServer(t, dummyPlayerStore, game))
@@ -139,6 +139,22 @@ func TestGame(t *testing.T) {
 		assertGameStartedWith(t, game, 3)
 		assertFinishCalledWith(t, game, winner)
 		within(t, tenMS, func() { assertWebsocketGotMsg(t, ws, wantedBlindAlert) })
+	})
+
+	t.Run("always store winner with lowercase", func(t *testing.T) {
+		winner := "Ruth"
+
+		game := &GameSpy{}
+		server := httptest.NewServer(mustMakePlayerServer(t, dummyPlayerStore, game))
+		ws := mustDialWS(t, "ws"+strings.TrimPrefix(server.URL, "http")+"/ws")
+
+		defer server.Close()
+		defer ws.Close()
+
+		writeWSMessage(t, ws, "3")
+		writeWSMessage(t, ws, winner)
+
+		assertFinishCalledWith(t, game, "ruth")
 	})
 }
 

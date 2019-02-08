@@ -2,13 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css?family=Rye" rel="stylesheet">
     <title>Let's play poker</title>
+    <style>
+        body {
+            padding: 2em 5em;
+            font-size:2em;
+        }
+        header {
+            font-family: 'Rye', cursive;
+            background-color: #104922;
+            color: white;
+            text-align: center;
+            line-height: 3em;
+        }
+        header, section {
+            width: 70%;
+            margin:auto;
+        }
+
+        #blind-value {
+            font-size:2em;
+            text-align: center;
+            margin: 1em auto;
+        }
+        button, input {
+            font-size: 1.5em;
+        }
+        label {
+            display: none;
+        }
+
+    </style>
 </head>
 <body>
+<header>
+    <h1>World Series of Springer Nature Poker</h1>
+</header>
 <section id="game">
     <div id="game-start">
         <label for="player-count">Number of players</label>
-        <input type="number" id="player-count"/>
+        <input type="number" placeholder="Enter # of players" id="player-count"/>
         <button id="start-game">Start</button>
     </div>
 
@@ -28,47 +62,56 @@
 
 </body>
 <script type="application/javascript">
-    const startGame = document.getElementById('game-start')
 
-    const declareWinner = document.getElementById('declare-winner')
-    const submitWinnerButton = document.getElementById('winner-button')
-    const winnerInput = document.getElementById('winner')
+  const startGame = document.getElementById('game-start')
 
-    const blindContainer = document.getElementById('blind-value')
+  const declareWinner = document.getElementById('declare-winner')
+  const submitWinnerButton = document.getElementById('winner-button')
+  const winnerInput = document.getElementById('winner')
 
-    const gameContainer = document.getElementById('game')
-    const gameEndContainer = document.getElementById('game-end')
+  const blindContainer = document.getElementById('blind-value')
 
-    declareWinner.hidden = true
-    gameEndContainer.hidden = true
+  const gameContainer = document.getElementById('game')
+  const gameEndContainer = document.getElementById('game-end')
 
-    document.getElementById('start-game').addEventListener('click', event => {
-        startGame.hidden = true
-        declareWinner.hidden = false
+  declareWinner.hidden = true
+  gameEndContainer.hidden = true
 
-        const numberOfPlayers = document.getElementById('player-count').value
+  var synth = window.speechSynthesis
 
-        if (window['WebSocket']) {
-            const conn = new WebSocket('ws://' + document.location.host + '/ws')
+  document.getElementById('start-game').addEventListener('click', event => {
+    startGame.hidden = true
+    declareWinner.hidden = false
 
-            submitWinnerButton.onclick = event => {
-                conn.send(winnerInput.value)
-                gameEndContainer.hidden = false
-                gameContainer.hidden = true
-            }
+    var utterThis = new SpeechSynthesisUtterance('Lets play poker')
+    synth.speak(utterThis)
 
-            conn.onclose = evt => {
-                blindContainer.innerText = 'Connection closed'
-            }
+    const numberOfPlayers = document.getElementById('player-count').value
 
-            conn.onmessage = evt => {
-                blindContainer.innerText = evt.data
-            }
+    if (window['WebSocket']) {
+      const conn = new WebSocket('ws://' + document.location.host + '/ws')
 
-            conn.onopen = function () {
-                conn.send(numberOfPlayers)
-            }
-        }
-    })
+      submitWinnerButton.onclick = event => {
+        conn.send(winnerInput.value)
+        gameEndContainer.hidden = false
+        gameContainer.hidden = true
+      }
+
+      conn.onclose = evt => {
+        blindContainer.innerText = 'Connection closed'
+      }
+
+      conn.onmessage = evt => {
+        const data = evt.data
+        var utterThis = new SpeechSynthesisUtterance(evt.data)
+        synth.speak(utterThis)
+        blindContainer.innerText = evt.data
+      }
+
+      conn.onopen = function () {
+        conn.send(numberOfPlayers)
+      }
+    }
+  })
 </script>
 </html>

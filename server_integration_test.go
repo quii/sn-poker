@@ -1,21 +1,22 @@
 package poker_test
 
 import (
-	"github.com/quii/sn-poker"
+	"github.com/quii/sn-poker/jsonbin"
+	"github.com/thanhpk/randstr"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 )
 
 func TestRecordingWinsAndRetrievingThem(t *testing.T) {
-	database, cleanDatabase := createTempFile(t, `[]`)
-	defer cleanDatabase()
-	store, err := poker.NewFileSystemPlayerStore(database)
+	client := &http.Client{}
+	binURL := "https://api.myjson.com/bins/ha5c8"
+	bin := &jsonbin.Store{Client: client, BinURL: binURL}
 
-	assertNoError(t, err)
+	server := mustMakePlayerServer(t, bin, dummyGame)
+	player := randstr.Hex(16)
 
-	server := mustMakePlayerServer(t, store, dummyGame)
-	player := "Pepper"
+	t.Log("new player", player)
 
 	server.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(player))
 	server.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(player))
@@ -27,17 +28,5 @@ func TestRecordingWinsAndRetrievingThem(t *testing.T) {
 		assertStatus(t, response, http.StatusOK)
 
 		assertResponseBody(t, response.Body.String(), "3")
-	})
-
-	t.Run("get League", func(t *testing.T) {
-		response := httptest.NewRecorder()
-		server.ServeHTTP(response, newLeagueRequest())
-		assertStatus(t, response, http.StatusOK)
-
-		got := getLeagueFromResponse(t, response.Body)
-		want := []poker.Player{
-			{Name: "Pepper", Wins: 3},
-		}
-		assertLeague(t, got, want)
 	})
 }

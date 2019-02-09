@@ -9,9 +9,20 @@
   revision = "66b9c49e59c6c48f0ffce28c2d8b8a5678502c6d"
   version = "v1.4.0"
 
+[[projects]]
+  digest = "1:478ac646b8363972530772c831de209d07e40122735c099f2d04217e744b120d"
+  name = "github.com/thanhpk/randstr"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "ac5b2d62bffbc6bd4d35a03d99dda19e93dc7c9f"
+  version = "1.0.3"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  input-imports = ["github.com/gorilla/websocket"]
+  input-imports = [
+    "github.com/gorilla/websocket",
+    "github.com/thanhpk/randstr",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1

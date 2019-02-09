@@ -1,6 +1,7 @@
 package poker
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -17,6 +18,13 @@ func (l League) Find(name string) *Player {
 		}
 	}
 	return nil
+}
+
+// Encode turns league into JSON
+func (l League) Encode() io.Reader {
+	buf := bytes.Buffer{}
+	json.NewEncoder(&buf).Encode(l)
+	return &buf
 }
 
 // NewLeague creates a League from JSON

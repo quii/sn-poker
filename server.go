@@ -14,7 +14,7 @@ import (
 type PlayerStore interface {
 	GetPlayerScore(name string) int
 	RecordWin(name string)
-	GetLeague() League
+	GetLeague() (League, error)
 }
 
 // Player stores a name with a number of wins
@@ -80,8 +80,15 @@ func (p *PlayerServer) playGame(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p *PlayerServer) leagueHandler(w http.ResponseWriter, r *http.Request) {
+	league, err := p.store.GetLeague()
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	w.Header().Set("content-type", jsonContentType)
-	json.NewEncoder(w).Encode(p.store.GetLeague())
+	json.NewEncoder(w).Encode(league)
 }
 
 func (p *PlayerServer) playersHandler(w http.ResponseWriter, r *http.Request) {

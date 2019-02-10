@@ -15,7 +15,7 @@ import (
 
 var (
 	dummyGame = &GameSpy{}
-	tenMS     = 10 * time.Millisecond
+	ten       = 10 * time.Millisecond
 )
 
 func mustMakePlayerServer(t *testing.T, store poker.PlayerStore, game poker.Game) *poker.PlayerServer {
@@ -138,7 +138,7 @@ func TestGame(t *testing.T) {
 
 		assertGameStartedWith(t, game, 3)
 		assertFinishCalledWith(t, game, winner)
-		within(t, tenMS, func() { assertWebsocketGotMsg(t, ws, wantedBlindAlert) })
+		within(t, ten, func() { assertWebsocketGotMsg(t, ws, wantedBlindAlert) })
 	})
 
 	t.Run("always store winner with lowercase", func(t *testing.T) {

@@ -23,7 +23,13 @@ type Store struct {
 
 // GetPlayerScore returns the score for a player
 func (j *Store) GetPlayerScore(name string) int {
-	league := j.GetLeague()
+	league, err := j.GetLeague()
+
+	if err != nil {
+		log.Println(err)
+		return 0 //todo: handle this properly
+	}
+
 	player := league.Find(name)
 
 	if player != nil {
@@ -35,7 +41,15 @@ func (j *Store) GetPlayerScore(name string) int {
 
 // RecordWin updates json bin with new winner added
 func (j *Store) RecordWin(name string) {
-	league := j.GetLeague()
+	league, err := j.GetLeague()
+
+	//todo: ...
+	if err != nil {
+		log.Println(err)
+		log.Println("did not record win")
+		return
+	}
+
 	league.AddWin(name)
 
 	req, _ := http.NewRequest(http.MethodPut, string(j.BinURL), league.Encode())
@@ -53,24 +67,22 @@ func (j *Store) RecordWin(name string) {
 }
 
 // GetLeague fetches the league from json bin
-func (j *Store) GetLeague() poker.League {
+func (j *Store) GetLeague() (poker.League, error) {
 	leagueReq, _ := http.NewRequest(http.MethodGet, string(j.BinURL), nil)
 	leagueRes, err := j.Client.Do(leagueReq)
 
 	if err != nil {
-		log.Println("problem getting league", err)
-		return poker.League{} //todo: handle errors properly
+		return nil, fmt.Errorf("problem getting league from %s, %v", j.BinURL, err)
 	}
 
 	defer leagueRes.Body.Close()
 	league, err := poker.NewLeague(leagueRes.Body)
 
 	if err != nil {
-		log.Println("problem parsing league", err)
-		return poker.League{} //todo: handle errors properly
+		return nil, fmt.Errorf("problem parsing league from %s, %v", j.BinURL, err)
 	}
 
-	return league
+	return league, nil
 }
 
 type jsonBinResponse struct {

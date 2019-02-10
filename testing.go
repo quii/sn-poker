@@ -26,8 +26,8 @@ func (s *StubPlayerStore) RecordWin(name string) {
 }
 
 // GetLeague returns League
-func (s *StubPlayerStore) GetLeague() League {
-	return s.League
+func (s *StubPlayerStore) GetLeague() (League, error) {
+	return s.League, nil
 }
 
 // AssertPlayerWin allows you to spy on the store's calls to RecordWin

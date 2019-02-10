@@ -31,26 +31,17 @@ type PlayerServer struct {
 }
 
 const jsonContentType = "application/json"
-const htmlTemplatePath = "game.html"
 
 // NewPlayerServer creates a PlayerServer with routing configured
 func NewPlayerServer(store PlayerStore, game Game) (*PlayerServer, error) {
 	p := new(PlayerServer)
-
-	tmpl, err := template.ParseFiles("game.html")
-
-	if err != nil {
-		return nil, fmt.Errorf("problem opening %s %v", htmlTemplatePath, err)
-	}
-
 	p.game = game
-	p.template = tmpl
 	p.store = store
 
 	router := http.NewServeMux()
 	router.Handle("/league", http.HandlerFunc(p.leagueHandler))
-	router.Handle("/game", http.HandlerFunc(p.playGame))
 	router.Handle("/ws", http.HandlerFunc(p.webSocket))
+	router.Handle("/", http.FileServer(http.Dir("./static")))
 
 	p.Handler = router
 

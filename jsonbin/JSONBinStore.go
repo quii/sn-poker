@@ -55,7 +55,7 @@ func (j *Store) GetLeague() (poker.League, error) {
 	}
 
 	defer leagueRes.Body.Close()
-	league, err := poker.NewLeague(leagueRes.Body)
+	league, err := poker.Decode(leagueRes.Body)
 
 	if err != nil {
 		return nil, fmt.Errorf("problem parsing league from %s, %v", j.BinURL, err)

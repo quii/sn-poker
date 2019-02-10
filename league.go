@@ -28,13 +28,6 @@ func (l League) Sort() {
 	})
 }
 
-// Encode turns league into JSON
-func (l League) Encode() io.Reader {
-	buf := bytes.Buffer{}
-	json.NewEncoder(&buf).Encode(l)
-	return &buf
-}
-
 // AddWin will update league with new winner
 func (l *League) AddWin(name string) {
 	player := l.Find(name)
@@ -46,8 +39,15 @@ func (l *League) AddWin(name string) {
 	}
 }
 
-// NewLeague creates a League from JSON
-func NewLeague(rdr io.Reader) (League, error) {
+// Encode turns league into JSON
+func (l League) Encode() io.Reader {
+	buf := bytes.Buffer{}
+	json.NewEncoder(&buf).Encode(l)
+	return &buf
+}
+
+// Decode creates a League from JSON
+func Decode(rdr io.Reader) (League, error) {
 	var league League
 	err := json.NewDecoder(rdr).Decode(&league)
 

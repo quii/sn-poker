@@ -59,6 +59,7 @@ func (j *Store) GetLeague() poker.League {
 
 	if err != nil {
 		log.Println("problem getting league", err)
+		return poker.League{} //todo: handle errors properly
 	}
 
 	defer leagueRes.Body.Close()
@@ -66,6 +67,7 @@ func (j *Store) GetLeague() poker.League {
 
 	if err != nil {
 		log.Println("problem parsing league", err)
+		return poker.League{} //todo: handle errors properly
 	}
 
 	return league
@@ -75,7 +77,8 @@ type jsonBinResponse struct {
 	URI string `json:"uri"`
 }
 
-func createNewJSONBin(client http.Client) (string, error) {
+// CreateNewJSONBin returns the url of a new JSON bin
+func CreateNewJSONBin(client *http.Client) (string, error) {
 	req, _ := http.NewRequest(http.MethodPost, jsonBinURL, bytes.NewBuffer([]byte(emptyJSON)))
 	req.Header.Add("content-type", "application/json")
 
@@ -92,8 +95,6 @@ func createNewJSONBin(client http.Client) (string, error) {
 	if err != nil {
 		return emptyBinURL, fmt.Errorf("problem decoding response from json bin %v", err)
 	}
-
-	fmt.Println("New bin", jsonBinResponse.URI)
 
 	return jsonBinResponse.URI, nil
 }

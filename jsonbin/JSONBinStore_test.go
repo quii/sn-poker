@@ -9,7 +9,7 @@ import (
 //func TestCanCreateNewBins(t *testing.T) {
 //	client := http.Client{}
 //
-//	bin, err := createNewJSONBin(client)
+//	bin, err := CreateNewJSONBin(client)
 //
 //	if err != nil {
 //		t.Fatal(err)

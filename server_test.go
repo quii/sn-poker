@@ -13,17 +13,8 @@ import (
 )
 
 var (
-	dummyGame = &GameSpy{}
-	ten       = 10 * time.Millisecond
+	ten = 10 * time.Millisecond
 )
-
-func mustMakePlayerServer(t *testing.T, store poker.PlayerStore, game poker.Game) *poker.PlayerServer {
-	server, err := poker.NewPlayerServer(store, game)
-	if err != nil {
-		t.Fatal("problem creating player server", err)
-	}
-	return server
-}
 
 func TestLeague(t *testing.T) {
 
@@ -35,7 +26,7 @@ func TestLeague(t *testing.T) {
 		}
 
 		store := poker.StubPlayerStore{League: wantedLeague}
-		server := mustMakePlayerServer(t, &store, dummyGame)
+		server := mustMakePlayerServer(t, &store, poker.DummyGame)
 
 		request := newLeagueRequest()
 		response := httptest.NewRecorder()
@@ -47,13 +38,12 @@ func TestLeague(t *testing.T) {
 		assertStatus(t, response, http.StatusOK)
 		assertLeague(t, got, wantedLeague)
 		assertContentType(t, response, "application/json")
-
 	})
 }
 
 func TestGame(t *testing.T) {
 	t.Run("GET /game returns 200", func(t *testing.T) {
-		server := mustMakePlayerServer(t, &poker.StubPlayerStore{}, dummyGame)
+		server := mustMakePlayerServer(t, &poker.StubPlayerStore{}, poker.DummyGame)
 
 		request := newGameRequest()
 		response := httptest.NewRecorder()
@@ -67,7 +57,9 @@ func TestGame(t *testing.T) {
 		wantedBlindAlert := "Blind is 100"
 		winner := "ruth"
 
-		game := &GameSpy{BlindAlert: []byte(wantedBlindAlert)}
+		game := poker.NewGameSpy(t)
+		game.BlindAlert = []byte(wantedBlindAlert)
+
 		server := httptest.NewServer(mustMakePlayerServer(t, dummyPlayerStore, game))
 		ws := mustDialWS(t, "ws"+strings.TrimPrefix(server.URL, "http")+"/ws")
 
@@ -77,15 +69,15 @@ func TestGame(t *testing.T) {
 		writeWSMessage(t, ws, "3")
 		writeWSMessage(t, ws, winner)
 
-		assertGameStartedWith(t, game, 3)
-		assertFinishCalledWith(t, game, winner)
+		game.AssertStartedWith(3)
+		game.AssertFinishCalledWith(winner)
 		within(t, ten, func() { assertWebsocketGotMsg(t, ws, wantedBlindAlert) })
 	})
 
 	t.Run("always store winner with lowercase", func(t *testing.T) {
 		winner := "Ruth"
 
-		game := &GameSpy{}
+		game := poker.NewGameSpy(t)
 		server := httptest.NewServer(mustMakePlayerServer(t, dummyPlayerStore, game))
 		ws := mustDialWS(t, "ws"+strings.TrimPrefix(server.URL, "http")+"/ws")
 
@@ -95,8 +87,16 @@ func TestGame(t *testing.T) {
 		writeWSMessage(t, ws, "3")
 		writeWSMessage(t, ws, winner)
 
-		assertFinishCalledWith(t, game, "ruth")
+		game.AssertFinishCalledWith("ruth")
 	})
+}
+
+func mustMakePlayerServer(t *testing.T, store poker.PlayerStore, game poker.Game) *poker.PlayerServer {
+	server, err := poker.NewPlayerServer(store, game)
+	if err != nil {
+		t.Fatal("problem creating player server", err)
+	}
+	return server
 }
 
 func assertWebsocketGotMsg(t *testing.T, ws *websocket.Conn, want string) {
@@ -104,16 +104,6 @@ func assertWebsocketGotMsg(t *testing.T, ws *websocket.Conn, want string) {
 	if string(msg) != want {
 		t.Errorf(`got "%s", want "%s"`, string(msg), want)
 	}
-}
-
-func retryUntil(d time.Duration, f func() bool) bool {
-	deadline := time.Now().Add(d)
-	for time.Now().Before(deadline) {
-		if f() {
-			return true
-		}
-	}
-	return false
 }
 
 func within(t *testing.T, d time.Duration, assert func()) {
@@ -190,49 +180,4 @@ func mustDialWS(t *testing.T, url string) *websocket.Conn {
 	}
 
 	return ws
-}
-
-type GameSpy struct {
-	StartCalled     bool
-	StartCalledWith int
-	BlindAlert      []byte
-
-	FinishedCalled   bool
-	FinishCalledWith string
-}
-
-func (g *GameSpy) Start(numberOfPlayers int, out io.Writer) {
-	g.StartCalled = true
-	g.StartCalledWith = numberOfPlayers
-	out.Write(g.BlindAlert)
-}
-
-func (g *GameSpy) Finish(winner string) error {
-	g.FinishedCalled = true
-	g.FinishCalledWith = winner
-	return nil
-}
-
-func assertFinishCalledWith(t *testing.T, game *GameSpy, winner string) {
-	t.Helper()
-
-	passed := retryUntil(500*time.Millisecond, func() bool {
-		return game.FinishCalledWith == winner
-	})
-
-	if !passed {
-		t.Errorf("expected finish called with '%s' but got '%s'", winner, game.FinishCalledWith)
-	}
-}
-
-func assertGameStartedWith(t *testing.T, game *GameSpy, numberOfPlayersWanted int) {
-	t.Helper()
-
-	passed := retryUntil(500*time.Millisecond, func() bool {
-		return game.StartCalledWith == numberOfPlayersWanted
-	})
-
-	if !passed {
-		t.Errorf("wanted Start called with %d but got %d", numberOfPlayersWanted, game.StartCalledWith)
-	}
 }

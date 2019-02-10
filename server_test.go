@@ -139,7 +139,7 @@ func assertContentType(t *testing.T, response *httptest.ResponseRecorder, want s
 
 func getLeagueFromResponse(t *testing.T, body io.Reader) []poker.Player {
 	t.Helper()
-	league, err := poker.Decode(body)
+	league, err := poker.DecodeLeague(body)
 
 	if err != nil {
 		t.Fatalf("Unable to parse response from server '%s' into slice of Player, '%v'", body, err)

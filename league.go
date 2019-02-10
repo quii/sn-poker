@@ -46,8 +46,8 @@ func (l League) Encode() io.Reader {
 	return &buf
 }
 
-// Decode creates a League from JSON
-func Decode(rdr io.Reader) (League, error) {
+// DecodeLeague creates a League from JSON
+func DecodeLeague(rdr io.Reader) (League, error) {
 	var league League
 	err := json.NewDecoder(rdr).Decode(&league)
 

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gorilla/websocket"
 	"html/template"
+	"io"
 	"net/http"
 	"strconv"
 	"strings"
@@ -20,6 +21,12 @@ type PlayerStore interface {
 type Player struct {
 	Name string
 	Wins int
+}
+
+// Game manages the state of a game
+type Game interface {
+	Start(numberOfPlayers int, alertsDestination io.Writer)
+	Finish(winner string) error
 }
 
 // PlayerServer is a HTTP interface for player information
@@ -67,10 +74,6 @@ func (p *PlayerServer) webSocket(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (p *PlayerServer) playGame(w http.ResponseWriter, r *http.Request) {
-	p.template.Execute(w, nil)
-}
-
 func (p *PlayerServer) leagueHandler(w http.ResponseWriter, r *http.Request) {
 	league, err := p.store.GetLeague()
 
@@ -81,33 +84,4 @@ func (p *PlayerServer) leagueHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("content-type", jsonContentType)
 	json.NewEncoder(w).Encode(league)
-}
-
-func (p *PlayerServer) showScore(w http.ResponseWriter, name string) {
-	league, err := p.store.GetLeague()
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	player := league.Find(name)
-
-	if player == nil {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
-
-	fmt.Fprint(w, player.Wins)
-}
-
-func (p *PlayerServer) processWin(w http.ResponseWriter, player string) {
-	err := p.store.RecordWin(player)
-
-	if err != nil {
-		http.Error(w, fmt.Sprintf("problem recording win %v", err), http.StatusInternalServerError)
-		return
-	}
-
-	w.WriteHeader(http.StatusAccepted)
 }

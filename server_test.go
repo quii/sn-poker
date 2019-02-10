@@ -42,7 +42,7 @@ func TestLeague(t *testing.T) {
 }
 
 func TestGame(t *testing.T) {
-	t.Run("GET /game returns 200", func(t *testing.T) {
+	t.Run("GET / returns 200", func(t *testing.T) {
 		server := mustMakePlayerServer(t, &poker.StubPlayerStore{}, poker.DummyGame)
 
 		request := newGameRequest()
@@ -163,7 +163,7 @@ func assertStatus(t *testing.T, got *httptest.ResponseRecorder, want int) {
 }
 
 func newGameRequest() *http.Request {
-	req, _ := http.NewRequest(http.MethodGet, "/game", nil)
+	req, _ := http.NewRequest(http.MethodGet, "/", nil)
 	return req
 }
 

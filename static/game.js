@@ -12,14 +12,11 @@ const gameEndContainer = document.getElementById('game-end');
 declareWinner.hidden = true;
 gameEndContainer.hidden = true;
 
-const synth = window.speechSynthesis;
-
 document.getElementById('start-game').addEventListener('click', event => {
     startGame.hidden = true;
     declareWinner.hidden = false;
 
-    const utterThis = new SpeechSynthesisUtterance('Lets play poker');
-    synth.speak(utterThis);
+    say('Lets play poker');
 
     const numberOfPlayers = document.getElementById('player-count').value;
 
@@ -28,7 +25,7 @@ document.getElementById('start-game').addEventListener('click', event => {
 
         submitWinnerButton.onclick = event => {
             conn.send(winnerInput.value);
-            synth.speak(new SpeechSynthesisUtterance(`Congratulations ${winnerInput.value}`));
+            say(`Congratulations ${winnerInput.value}`);
             gameEndContainer.hidden = false;
             gameContainer.hidden = true
         };
@@ -39,7 +36,7 @@ document.getElementById('start-game').addEventListener('click', event => {
 
         conn.onmessage = evt => {
             const data = evt.data;
-            synth.speak(new SpeechSynthesisUtterance(data));
+            say(data);
             blindContainer.innerText = data
         };
 
@@ -48,3 +45,7 @@ document.getElementById('start-game').addEventListener('click', event => {
         }
     }
 });
+
+function say(msg) {
+    window.speechSynthesis.speak(new SpeechSynthesisUtterance(msg));
+}

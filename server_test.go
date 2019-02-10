@@ -283,9 +283,10 @@ func (g *GameSpy) Start(numberOfPlayers int, out io.Writer) {
 	out.Write(g.BlindAlert)
 }
 
-func (g *GameSpy) Finish(winner string) {
+func (g *GameSpy) Finish(winner string) error {
 	g.FinishedCalled = true
 	g.FinishCalledWith = winner
+	return nil
 }
 
 func assertFinishCalledWith(t *testing.T, game *GameSpy, winner string) {

@@ -40,14 +40,11 @@ func (j *Store) GetPlayerScore(name string) int {
 }
 
 // RecordWin updates json bin with new winner added
-func (j *Store) RecordWin(name string) {
+func (j *Store) RecordWin(name string) error {
 	league, err := j.GetLeague()
 
-	//todo: ...
 	if err != nil {
-		log.Println(err)
-		log.Println("did not record win")
-		return
+		return err
 	}
 
 	league.AddWin(name)
@@ -57,13 +54,14 @@ func (j *Store) RecordWin(name string) {
 	res, err := j.Client.Do(req)
 
 	if err != nil {
-		log.Println("problem storing league", err)
+		return fmt.Errorf("problem storing new json at %s %v", j.BinURL, err)
 	}
 
 	if res.StatusCode != http.StatusOK {
-		log.Println("did not get 200 when storing league", res)
+		return fmt.Errorf("did not get 200 when storing new json at %s, got %v", j.BinURL, res.Status)
 	}
 
+	return nil
 }
 
 // GetLeague fetches the league from json bin

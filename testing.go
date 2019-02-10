@@ -21,8 +21,9 @@ func (s *StubPlayerStore) GetPlayerScore(name string) int {
 }
 
 // RecordWin will record a win to WinCalls
-func (s *StubPlayerStore) RecordWin(name string) {
+func (s *StubPlayerStore) RecordWin(name string) error {
 	s.WinCalls = append(s.WinCalls, name)
+	return nil
 }
 
 // GetLeague returns League

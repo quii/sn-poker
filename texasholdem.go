@@ -32,6 +32,6 @@ func (p *TexasHoldem) Start(numberOfPlayers int, alertsDestination io.Writer) {
 }
 
 // Finish ends the game, recording the winner
-func (p *TexasHoldem) Finish(winner string) {
-	p.store.RecordWin(winner)
+func (p *TexasHoldem) Finish(winner string) error {
+	return p.store.RecordWin(winner)
 }

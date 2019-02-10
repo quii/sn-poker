@@ -13,7 +13,7 @@ import (
 // PlayerStore stores score information about players
 type PlayerStore interface {
 	GetPlayerScore(name string) int
-	RecordWin(name string)
+	RecordWin(name string) error
 	GetLeague() (League, error)
 }
 
@@ -72,7 +72,10 @@ func (p *PlayerServer) webSocket(w http.ResponseWriter, r *http.Request) {
 	p.game.Start(numberOfPlayers, ws)
 
 	winner := ws.WaitForMsg()
-	p.game.Finish(strings.ToLower(winner))
+
+	if err := p.game.Finish(strings.ToLower(winner)); err != nil {
+		fmt.Fprintf(ws, "there was a problem finishing the game - %v", p.game.Finish(strings.ToLower(winner)))
+	}
 }
 
 func (p *PlayerServer) playGame(w http.ResponseWriter, r *http.Request) {
@@ -113,6 +116,12 @@ func (p *PlayerServer) showScore(w http.ResponseWriter, player string) {
 }
 
 func (p *PlayerServer) processWin(w http.ResponseWriter, player string) {
-	p.store.RecordWin(player)
+	err := p.store.RecordWin(player)
+
+	if err != nil {
+		http.Error(w, fmt.Sprintf("problem recording win %v", err), http.StatusInternalServerError)
+		return
+	}
+
 	w.WriteHeader(http.StatusAccepted)
 }

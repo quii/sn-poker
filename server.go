@@ -12,7 +12,6 @@ import (
 
 // PlayerStore stores score information about players
 type PlayerStore interface {
-	GetPlayerScore(name string) int
 	RecordWin(name string) error
 	GetLeague() (League, error)
 }
@@ -50,7 +49,6 @@ func NewPlayerServer(store PlayerStore, game Game) (*PlayerServer, error) {
 
 	router := http.NewServeMux()
 	router.Handle("/league", http.HandlerFunc(p.leagueHandler))
-	router.Handle("/players/", http.HandlerFunc(p.playersHandler))
 	router.Handle("/game", http.HandlerFunc(p.playGame))
 	router.Handle("/ws", http.HandlerFunc(p.webSocket))
 
@@ -94,25 +92,22 @@ func (p *PlayerServer) leagueHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(league)
 }
 
-func (p *PlayerServer) playersHandler(w http.ResponseWriter, r *http.Request) {
-	player := r.URL.Path[len("/players/"):]
+func (p *PlayerServer) showScore(w http.ResponseWriter, name string) {
+	league, err := p.store.GetLeague()
 
-	switch r.Method {
-	case http.MethodPost:
-		p.processWin(w, player)
-	case http.MethodGet:
-		p.showScore(w, player)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
-}
 
-func (p *PlayerServer) showScore(w http.ResponseWriter, player string) {
-	score := p.store.GetPlayerScore(player)
+	player := league.Find(name)
 
-	if score == 0 {
+	if player == nil {
 		w.WriteHeader(http.StatusNotFound)
+		return
 	}
 
-	fmt.Fprint(w, score)
+	fmt.Fprint(w, player.Wins)
 }
 
 func (p *PlayerServer) processWin(w http.ResponseWriter, player string) {

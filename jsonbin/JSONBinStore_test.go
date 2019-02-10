@@ -5,34 +5,36 @@ import (
 	"testing"
 )
 
-// uncomment me to create a new bin
-//func TestCanCreateNewBins(t *testing.T) {
-//	client := http.Client{}
-//
-//	bin, err := CreateNewJSONBin(client)
-//
-//	if err != nil {
-//		t.Fatal(err)
-//	}
-//
-//	if bin == emptyBinURL {
-//		t.Error("did not get a bin id")
-//	}
-//}
-
 func TestJSONBinStore(t *testing.T) {
 	client := &http.Client{}
 	binURL := "https://api.myjson.com/bins/ha5c8"
 	bin := Store{Client: client, BinURL: binURL}
 
-	player := "bob"
+	playerName := "bob"
 
-	currentScore := bin.GetPlayerScore(player)
+	league, err := bin.GetLeague()
 
-	bin.RecordWin(player)
-	bin.RecordWin(player)
+	if err != nil {
+		t.Fatal(err)
+	}
 
-	got := bin.GetPlayerScore(player)
+	player := league.Find(playerName)
+
+	currentScore := 0
+	if player != nil {
+		currentScore = player.Wins
+	}
+
+	bin.RecordWin(playerName)
+	bin.RecordWin(playerName)
+
+	league, err = bin.GetLeague()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	got := league.Find(playerName).Wins
 	want := currentScore + 2
 
 	if got != want {

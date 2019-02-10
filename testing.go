@@ -14,12 +14,6 @@ type StubPlayerStore struct {
 	League   []Player
 }
 
-// GetPlayerScore returns a score from Scores
-func (s *StubPlayerStore) GetPlayerScore(name string) int {
-	score := s.Scores[name]
-	return score
-}
-
 // RecordWin will record a win to WinCalls
 func (s *StubPlayerStore) RecordWin(name string) error {
 	s.WinCalls = append(s.WinCalls, name)

@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/quii/sn-poker"
-	"log"
 	"net/http"
 )
 
@@ -19,24 +18,6 @@ const (
 type Store struct {
 	Client *http.Client
 	BinURL string
-}
-
-// GetPlayerScore returns the score for a player
-func (j *Store) GetPlayerScore(name string) int {
-	league, err := j.GetLeague()
-
-	if err != nil {
-		log.Println(err)
-		return 0 //todo: handle this properly
-	}
-
-	player := league.Find(name)
-
-	if player != nil {
-		return player.Wins
-	}
-
-	return 0
 }
 
 // RecordWin updates json bin with new winner added

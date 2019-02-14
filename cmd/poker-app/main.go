@@ -20,6 +20,11 @@ func main() {
 		binURL = testBin
 	}
 
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "5000"
+	}
+
 	client := &http.Client{}
 
 	bin := &jsonbin.Store{Client: client, BinURL: binURL}
@@ -32,8 +37,8 @@ func main() {
 		log.Fatalf("problem creating player server %v", err)
 	}
 
-	fmt.Println("Listening on port 5000")
-	if err := http.ListenAndServe(":5000", server); err != nil {
+	fmt.Println("Listening on port", port)
+	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), server); err != nil {
 		log.Fatalf("could not listen on port 5000 %v", err)
 	}
 }

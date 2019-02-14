@@ -42,16 +42,6 @@ func TestLeague(t *testing.T) {
 }
 
 func TestGame(t *testing.T) {
-	t.Run("GET / returns 200", func(t *testing.T) {
-		server := mustMakePlayerServer(t, &poker.StubPlayerStore{}, poker.DummyGame)
-
-		request := newGameRequest()
-		response := httptest.NewRecorder()
-
-		server.ServeHTTP(response, request)
-
-		assertStatus(t, response, http.StatusOK)
-	})
 
 	t.Run("start a game with 3 players, send some blind alerts down WS and declare Ruth the winner", func(t *testing.T) {
 		wantedBlindAlert := "Blind is 100"
@@ -160,11 +150,6 @@ func assertStatus(t *testing.T, got *httptest.ResponseRecorder, want int) {
 	if got.Code != want {
 		t.Errorf("did not get correct status, got %d, want %d", got.Code, want)
 	}
-}
-
-func newGameRequest() *http.Request {
-	req, _ := http.NewRequest(http.MethodGet, "/", nil)
-	return req
 }
 
 func newLeagueRequest() *http.Request {

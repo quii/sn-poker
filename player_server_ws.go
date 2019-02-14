@@ -4,10 +4,12 @@ import (
 	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
+	"sync"
 )
 
 type playerServerWS struct {
-	*websocket.Conn
+	conn *websocket.Conn
+	mu   sync.Mutex
 }
 
 func newPlayerServerWS(w http.ResponseWriter, r *http.Request) *playerServerWS {
@@ -17,11 +19,11 @@ func newPlayerServerWS(w http.ResponseWriter, r *http.Request) *playerServerWS {
 		log.Printf("problem upgrading connection to websockets %v\n", err)
 	}
 
-	return &playerServerWS{conn}
+	return &playerServerWS{conn: conn}
 }
 
 func (w *playerServerWS) Write(p []byte) (n int, err error) {
-	err = w.WriteMessage(1, p)
+	err = w.conn.WriteMessage(1, p)
 
 	if err != nil {
 		return 0, err
@@ -31,7 +33,10 @@ func (w *playerServerWS) Write(p []byte) (n int, err error) {
 }
 
 func (w *playerServerWS) WaitForMsg() string {
-	_, msg, err := w.ReadMessage()
+	w.mu.Lock()
+	defer w.mu.Unlock()
+
+	_, msg, err := w.conn.ReadMessage()
 	if err != nil {
 		log.Printf("error reading from websocket %v\n", err)
 	}

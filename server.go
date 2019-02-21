@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/websocket"
-	"html/template"
 	"io"
 	"net/http"
 	"strconv"
@@ -33,8 +32,7 @@ type Game interface {
 type PlayerServer struct {
 	store PlayerStore
 	http.Handler
-	template *template.Template
-	game     Game
+	game Game
 }
 
 const jsonContentType = "application/json"

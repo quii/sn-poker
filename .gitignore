@@ -2,3 +2,5 @@
 *.iml
 
 game.db.json
+cmd/poker-app/sn-poker
+cmd/poker-app/sn-poker-linux

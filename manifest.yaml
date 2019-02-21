@@ -1,11 +1,8 @@
 applications:
-  - name: sn-poker
-    memory: 100M
-    instances: 1
-    command: 'go run ./cmd/poker-app'
-    env:
-      GOVERSION: go1.10
-
-#    buildpack: https://github.com/cloudfoundry/binary-buildpack.git#v1.0.26
-#    routes:
-#  - route: cjtest.springernature.app
+- name: sn-poker
+  memory: 100M
+  instances: 1
+  buildpacks:
+  - https://github.com/cloudfoundry/binary-buildpack.git#v1.0.26
+  routes:
+  - route: sn-poker.public.springernature.app

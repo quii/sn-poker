@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	blinds = []int{100, 200, 300, 400, 500, 600, 800, 1000, 2000, 4000, 8000}
+	blinds = []int{100, 200, 300, 400, 500, 600, 800, 1000, 1500, 2000, 4000, 8000}
 )
 
 // TexasHoldem manages a game of poker

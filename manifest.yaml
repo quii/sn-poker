@@ -6,3 +6,5 @@ applications:
   - https://github.com/cloudfoundry/binary-buildpack.git#v1.0.26
   routes:
   - route: sn-poker.public.springernature.app
+  env:
+    BIN: https://api.myjson.com/bins/ha5c8

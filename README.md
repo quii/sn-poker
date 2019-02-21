@@ -24,12 +24,10 @@ If you want to make a new bin, run the jsbin app. It will print the URL of the n
 
 ## Test & Build
 
-```
-./build.sh
+`./build.sh` or in docker `docker-compose up`
 
-# or to start after build
-./run.sh
-```
+# Run
+`./run.sh` or in docker `docker-compose run --service-ports app ./run.sh`
 
 ## Deploy to CloudFoundry
 

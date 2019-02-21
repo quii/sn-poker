@@ -37,7 +37,7 @@ func main() {
 		log.Fatalf("problem creating player server %v", err)
 	}
 
-	fmt.Println("Listening on port", port)
+	fmt.Println("Listening on http://localhost:" + port)
 	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), server); err != nil {
 		log.Fatalf("could not listen on port 5000 %v", err)
 	}

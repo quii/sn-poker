@@ -29,9 +29,10 @@ func TestGame_Start(t *testing.T) {
 			{At: 50 * time.Minute, Amount: 600},
 			{At: 60 * time.Minute, Amount: 800},
 			{At: 70 * time.Minute, Amount: 1000},
-			{At: 80 * time.Minute, Amount: 2000},
-			{At: 90 * time.Minute, Amount: 4000},
-			{At: 100 * time.Minute, Amount: 8000},
+			{At: 80 * time.Minute, Amount: 1500},
+			{At: 90 * time.Minute, Amount: 2000},
+			{At: 100 * time.Minute, Amount: 4000},
+			{At: 110 * time.Minute, Amount: 8000},
 		}
 
 		checkSchedulingCases(cases, t, blindAlerter)

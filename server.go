@@ -67,6 +67,10 @@ func (p *PlayerServer) webSocket(w http.ResponseWriter, r *http.Request) {
 
 	winner := ws.WaitForMsg()
 
+	if winner == "" {
+		return
+	}
+
 	if err := p.game.Finish(strings.ToLower(winner)); err != nil {
 		fmt.Fprintf(ws, "there was a problem finishing the game - %v", p.game.Finish(strings.ToLower(winner)))
 	}

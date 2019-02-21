@@ -10,21 +10,12 @@ import (
 )
 
 const testBin = "https://api.myjson.com/bins/ha5c8"
+const defaultPort = "5000"
 
 func main() {
 
-	binURL := os.Getenv("BIN")
-	if binURL == "" {
-		fmt.Println("Warning: You have not set a BIN environment variable")
-		fmt.Printf("Defaulting to test bin %s\n", testBin)
-		binURL = testBin
-	}
-
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "5000"
-	}
-
+	binURL := getEnvOrElse("BIN", testBin)
+	port := getEnvOrElse("PORT", defaultPort)
 	client := &http.Client{}
 
 	bin := &jsonbin.Store{Client: client, BinURL: binURL}
@@ -41,4 +32,15 @@ func main() {
 	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), server); err != nil {
 		log.Fatalf("could not listen on port 5000 %v", err)
 	}
+}
+
+func getEnvOrElse(key, fallback string) string {
+	value := os.Getenv(key)
+
+	if value == "" {
+		fmt.Printf("%s environment variable not set, defaulting to %s\n", key, fallback)
+		value = fallback
+	}
+
+	return value
 }

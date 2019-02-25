@@ -1,11 +1,17 @@
 body {
-    padding: 2em 5em;
-    font-size: 2em;
+    padding: 0;
+    margin:0;
 }
 
-header, section {
-    width: 70%;
-    margin: auto;
+header {
+    font-family: 'Rye', cursive;
+    background-color: #104922;
+    color: white;
+    text-align: center;
+    line-height: 3em;
+    padding: 0.5em;
+    margin-bottom: 1em;
+    border-bottom: 4px solid #222;
 }
 
 header > h1 {
@@ -15,46 +21,48 @@ header > h1 {
 
 header > h1 > span {
     display: block;
-    margin-top: 1em;
-}
-
-header {
-    font-family: 'Rye', cursive;
-    background-color: #104922;
-    color: white;
-    text-align: center;
-    line-height: 3em;
-    position: relative;
-    border-radius: 5em;
-    padding: 0.5em;
-    margin-bottom: 1em;
-    border: 1em solid #222;
-    position: relative;
 }
 
 #blind-value {
     font-size: 2em;
     text-align: center;
-    margin: 1em auto;
+    margin: 1em 0;
 }
 
 button, input {
     font-size: 1.3em;
     cursor: pointer;
+    height: 1.6em;    
+}
+
+input {
+    border: 2px solid #aaa;
+    padding: 0 0.5em;
+}
+
+section:first-of-type {
+    display: grid;
+}
+
+section:first-of-type > div:not([hidden]) {
+    grid-column: 2;
+    grid-column-gap: 10px;
+    display: flex;
+    align-items: center;
 }
 
 #game-start button {
-    width: 3em;
-    height: 3em;
+    width: 2em;
+    height: 2em;
     background: none;
     border: none;
+    padding: 0;
     position: relative;
-    top:40px;
 }
 
 #declare-winner button {
     width: 8em;
-    height: 1.5em;
+    height: 2.9em;
     background: #104922;
     border-radius: 1em;
     border: 4px solid #222;
@@ -65,127 +73,177 @@ button, input {
 
 button span {
     position: absolute;
-    top:36px;
-    left: 41px;
+    top:27%;
+    left:27%;
     color:white;
-    font-size: 0.8em;
-}
-
-input:first-of-type {
-    margin-top: -10px;
+    font-size: 0.7em;
 }
 
 label {
     display: none;
 }
 
-.card-flip {
-    transform: rotateY(360deg);
-    transition: 2.6s;
-    transform-style: preserve-3d;
+
+@media only screen and (min-width : 900px) {
+    body {
+        font-size: 2em;
+    }
+
+    header, section {        
+        margin: 1em auto;
+    }
+    header {
+        width: 24em;
+        position: relative;
+        border-radius: 5em;
+        border: 1em solid #222;
+        position: relative;
+    }
+    header > h1 > span {
+        margin-top: 1em;
+    }
+
+    .card-flip {
+        transform: rotateY(360deg);
+        transition: 2.6s;
+        transform-style: preserve-3d;
+    }
+
+    header > div > span > span,
+    header > div > div > span {
+        transform: rotateY(180deg);    
+        background-image: url(images/card-back.svg);
+        background-repeat: no-repeat;
+        background-size: contain;
+        width: 1.5em;
+        height: 5em;
+        display: block;
+        position: absolute;
+    }
+
+    header > div > span {
+        position: absolute;
+    }
+
+    header > div > div > span:nth-of-type(1) {
+        margin-left: -30px;
+        margin-top: 3px;
+    }
+
+    header > div > span:nth-of-type(1){
+        top: 54%;
+        left: 31%;
+        transform: rotate(2deg);
+    }
+
+    header > div > span:nth-of-type(2){
+        top: 55%;
+        left: 39%;
+        transform: rotate(-1deg);
+    }
+
+    header > div > span:nth-of-type(3){
+        top: 53.5%;
+        left: 47%;
+        transform: rotate(-2deg);
+    }
+
+    header > div > span:nth-of-type(4){
+        top: 54%;
+        left: 55%;
+        transform: rotate(-3deg);
+    }
+
+    header > div > span:nth-of-type(5){
+        top: 53.5%;
+        left: 63%;
+        transform: rotate(1deg);
+    }
+
+    header > div > div:nth-of-type(1){
+        top: 15%;
+        left: 7%;
+        position: absolute;
+        transform: rotate(3deg);
+    }
+
+    header > div > div:nth-of-type(2){
+        top: 14%;
+        right: 11%;
+        position: absolute;
+        transform: rotate(7deg);
+    }
+
+    header > div > div:nth-of-type(3){
+        bottom: 25%;
+        left: 10%;
+        position: absolute;
+        transform: rotate(-14deg);
+    }
+
+    header > div > div:nth-of-type(4){
+        bottom: 25%;
+        right: 9%;
+        position: absolute;
+        transform: rotate(56deg);
+    }
 }
 
-header > div > span > span,
-header > div > div > span {
-    transform: rotateY(180deg);    
-    background-image: url(images/card-back.svg);
-    background-repeat: no-repeat;
-    background-size: contain;
-    width: 1.5em;
-    height: 5em;
-    display: block;
-    position: absolute;
+section > dl {
+    display: grid;
+    grid-auto-columns: 1fr;
+    grid-auto-flow: row;
 }
 
-header > div > span {
-    position: absolute;
+section {
+    margin: 0;
 }
 
-header > div > div > span:nth-of-type(1) {
-    margin-left: -30px;
-    margin-top: 3px;
+section h2 {
+    font-family: 'Rye', cursive;
+    background-color: #104922;
+    color: white;
+    text-align: center;
+    line-height: 1.8em;
+    margin: 1em 0;
+    border-bottom: 2px solid #222;
+    border-top: 2px solid #222;
 }
 
-header > div > span:nth-of-type(1){
-    top: 54%;
-    left: 31%;
-    transform: rotate(2deg);
-}
-
-header > div > span:nth-of-type(2){
-    top: 55%;
-    left: 39%;
-    transform: rotate(-1deg);
-}
-
-header > div > span:nth-of-type(3){
-    top: 53.5%;
-    left: 47%;
-    transform: rotate(-2deg);
-}
-
-header > div > span:nth-of-type(4){
-    top: 54%;
-    left: 55%;
-    transform: rotate(-3deg);
-}
-
-header > div > span:nth-of-type(5){
-    top: 53.5%;
-    left: 63%;
-    transform: rotate(1deg);
-}
-
-header > div > div:nth-of-type(1){
-    top: 15%;
-    left: 7%;
-    position: absolute;
-    transform: rotate(3deg);
-}
-
-header > div > div:nth-of-type(2){
-    top: 14%;
-    right: 11%;
-    position: absolute;
-    transform: rotate(7deg);
-}
-
-header > div > div:nth-of-type(3){
-    bottom: 25%;
-    left: 10%;
-    position: absolute;
-    transform: rotate(-14deg);
-}
-
-header > div > div:nth-of-type(4){
-    bottom: 25%;
-    right: 9%;
-    position: absolute;
-    transform: rotate(56deg);
+dt {
+    grid-row:1;
+    height: 2em;
+    width: 2em;
+    margin: 0.3em auto;
 }
 
 dd  {
    margin:0.5em 0; 
+   text-align: center;
 }
 
-dt {
-    height: 2em;
-    width: 2em;
-    margin: 1em 0;
+dd:first-of-type {
+    grid-row:2;
 }
+
+dd:nth-of-type(2n) {
+    grid-row:3;
+}
+
 dt:nth-of-type(1){
-    background: black;
-    fill: white;
+    fill: blue;
 }
 
 dt:nth-of-type(2){
-    fill: red;
-}
-
-dt:nth-of-type(3){
     fill: black;
 }
 
+dt:nth-of-type(3){
+    fill: red;
+}
+
 dt:nth-of-type(4){
-    fill: blue;
+    background: black;
+    
+    fill: white;
 }

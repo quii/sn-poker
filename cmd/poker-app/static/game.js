@@ -16,9 +16,6 @@ for(var i = 1; i <= 52; i++){
     cardImages.push(i);
 }
 
-console.log(cardsOnTable);
-
-
 const resetDeal = function(){
     function shuffle(o) {
         for(var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
@@ -49,7 +46,7 @@ document.getElementById('start-game').addEventListener('click', event => {
     const numberOfPlayers = document.getElementById('player-count').value;
 
     if (window['WebSocket']) {
-        const conn = new WebSocket('ws://' + document.location.host + '/ws');
+        const conn = new WebSocket('wss://' + document.location.host + '/ws');
 
         submitWinnerButton.onclick = event => {
             conn.send(winnerInput.value);

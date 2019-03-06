@@ -30,7 +30,6 @@ const resetDeal = function(){
         function setCards() {
             card.setAttribute("style","background-image: url(images/"+[randomCard[index]]+".svg");            
         }
-        console.log(card);
     });
 };
 
@@ -46,7 +45,9 @@ document.getElementById('start-game').addEventListener('click', event => {
     const numberOfPlayers = document.getElementById('player-count').value;
 
     if (window['WebSocket']) {
-        const conn = new WebSocket('wss://' + document.location.host + '/ws');
+        const wsURL = 'wss://' + document.location.host + '/ws';
+        console.log('connecting to websockets on ', wsURL);
+        const conn = new WebSocket(wsURL);
 
         submitWinnerButton.onclick = event => {
             conn.send(winnerInput.value);

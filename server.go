@@ -3,7 +3,6 @@ package poker
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/websocket"
 	"io"
 	"net/http"
 	"strconv"
@@ -51,11 +50,6 @@ func NewPlayerServer(store PlayerStore, game Game) (*PlayerServer, error) {
 	p.Handler = router
 
 	return p, nil
-}
-
-var wsUpgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
 }
 
 func (p *PlayerServer) webSocket(w http.ResponseWriter, r *http.Request) {

@@ -45,7 +45,7 @@ document.getElementById('start-game').addEventListener('click', event => {
     const numberOfPlayers = document.getElementById('player-count').value;
 
     if (window['WebSocket']) {
-        const wsURL = 'wss://' + document.location.host + '/ws';
+        const wsURL = 'ws://' + document.location.host + '/ws';
         console.log('connecting to websockets on ', wsURL);
         const conn = new WebSocket(wsURL);
 
